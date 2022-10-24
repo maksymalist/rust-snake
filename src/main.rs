@@ -135,12 +135,17 @@ fn snake_movement(
                 head_pos.y -= 1;
             }
         };
-        if head_pos.x < 0
-            || head_pos.y < 0
-            || head_pos.x as u32 >= ARENA_WIDTH
-            || head_pos.y as u32 >= ARENA_HEIGHT
-        {
-            game_over_writer.send(GameOverEvent);
+        if head_pos.x < 0 {
+            head_pos.x = ARENA_WIDTH as i32 - 1;
+        }
+        if head_pos.x >= ARENA_WIDTH as i32 {
+            head_pos.x = 0;
+        }
+        if head_pos.y < 0 {
+            head_pos.y = ARENA_HEIGHT as i32 - 1;
+        }
+        if head_pos.y >= ARENA_HEIGHT as i32 {
+            head_pos.y = 0;
         }
         if segment_positions.contains(&head_pos) {
             game_over_writer.send(GameOverEvent);
@@ -238,19 +243,7 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Tra
             convert(pos.x as f32, window.width() as f32, ARENA_WIDTH as f32),
             convert(pos.y as f32, window.height() as f32, ARENA_HEIGHT as f32),
             0.0,
-        );
-    }
-}
-
-fn food_spawner(mut commands: Commands) {
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                color: FOOD_COLOR,
-                ..default()
-            },
-            ..default()
-        })
+        ); } } fn food_spawner(mut commands: Commands) { commands .spawn_bundle(SpriteBundle { sprite: Sprite { color: FOOD_COLOR, ..default() }, ..default() })
         .insert(Food)
         .insert(Position {
             x: (random::<f32>() * ARENA_WIDTH as f32) as i32,
